@@ -1,0 +1,40 @@
+.hamburguer {
+    width: 30px;
+    height: 30px;
+    border-radius: 10%;
+    position: relative;
+}
+.hamburguer:after,
+.hamburguer:before {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 10%;
+    background-color: white;
+    border-radius: 20px;
+    transition: 1s ease;
+}
+.hamburguer:after {
+    top: 30%;
+    left: 15%;
+}
+.hamburguer:before {
+    top: 60%;
+    left: 15%;
+    width: 40%;
+    left: 30%;
+}
+#hamburguer:checked ~ label .hamburguer:after {
+    transform: rotate(225deg);
+    top: 45%;
+    left: 15%;
+    width: 70%;
+    height: 10%;
+}
+#hamburguer:checked ~ label .hamburguer:before {
+    transform: rotate(-225deg);
+    top: 45%;
+    left: 15%;
+    width: 70%;
+    height: 10%;
+}
