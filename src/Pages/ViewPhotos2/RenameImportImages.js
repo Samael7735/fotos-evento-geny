@@ -14,8 +14,8 @@ async function renamePhotos() {
         let photoCount = 1;
 
         for (const file of files) {
-            const extname = path.extname(file);
-            const newFileName = `Foto${String(photoCount).padStart(2, '0')}${extname}`;
+            const extname = path.extname(file); // Obtém a extensão do arquivo
+            const newFileName = `Foto${String(photoCount).padStart(2, '0')}${extname}`; // Novo nome com extensão
             const oldFilePath = path.join(photosDir, file);
             const newFilePath = path.join(photosDir, newFileName);
 
@@ -23,8 +23,8 @@ async function renamePhotos() {
             await fs.promises.rename(oldFilePath, newFilePath);
             console.log(`Renomeado: ${file} para ${newFileName}`);
 
-            // Adiciona o nome da foto como uma string ao array
-            photoNames.push(`"${newFileName.replace(extname, '')}"`); // Adiciona o nome entre aspas
+            // Adiciona o nome da foto incluindo a extensão ao array
+            photoNames.push(`"${newFileName}"`); // Inclui o nome completo, já com extensão
 
             photoCount++;
         }

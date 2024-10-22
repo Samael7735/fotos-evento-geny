@@ -21,35 +21,27 @@ import { BoxSection } from "../../Components/BoxSections/BoxSection";
 import { CardPhotos } from "../../Components/CardPhotos/CardPhotos";
 import Ghost from '../../assets/Images/ghost.png';
 import { NavLink } from "react-router-dom";
+import photoImports from "./imports"; // Importa o array de imagens
 
 export const ViewPhotos2 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedPhoto, setSelectedPhoto] = useState(null);
-    const [photoImports, setPhotoImports] = useState([]);
+    const [imageLinks, setImageLinks] = useState([]); // Array para armazenar os links de imagens
 
     useEffect(() => {
+        const baseUrl = "https://raw.githubusercontent.com/Samael7735/fotos-evento-geny/main/src/assets/Fotos"; // URL base para as imagens
         const storedLinks = localStorage.getItem('imageLinks');
 
         if (storedLinks) {
-            try {
-                setPhotoImports(JSON.parse(storedLinks)); // Carrega os links do local storage
-            } catch (error) {
-                console.error("Error parsing stored links:", error);
-                // Aqui você pode redefinir para um estado padrão se desejar
-            }
+            // Se os links estão armazenados, parseia e atualiza o estado
+            setImageLinks(JSON.parse(storedLinks));
         } else {
-            const photoNames = [
-                
-            ];
+            // Se não há links armazenados, gera novos links
+            const photoNames = photoImports.map(photo => photo.replace(/"/g, '')); // Limpa aspas do array importado
+            const newLinks = photoNames.map(name => `${baseUrl}/${name}`); // Cria links completos
 
-            // Base URL do GitHub
-            const baseUrl = "https://raw.githubusercontent.com/Samael7735/fotos-evento-geny/main/";
-
-            // Gera os links completos
-            const imageLinks = photoNames.map(name => `${baseUrl}${name}`);
-
-            setPhotoImports(imageLinks); // Define os links no estado
-            localStorage.setItem('imageLinks', JSON.stringify(imageLinks)); // Armazena os links no local storage
+            setImageLinks(newLinks); // Atualiza o estado com os novos links
+            localStorage.setItem('imageLinks', JSON.stringify(newLinks)); // Armazena os links no local storage
         }
     }, []);
 
@@ -58,18 +50,31 @@ export const ViewPhotos2 = () => {
         onOpen();
     };
 
-    const handleDownload = () => {
-        const link = document.createElement('a');
-        link.href = selectedPhoto; // URL da imagem
-        link.download = selectedPhoto.split('/').pop(); // Nome do arquivo
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        onClose();
+    const handleDownload = async () => {
+        if (!selectedPhoto) {
+            console.error('Nenhuma foto selecionada para download');
+            return;
+        }
+    
+        try {
+            const response = await fetch(selectedPhoto); // Faz uma requisição para obter a imagem
+            const blob = await response.blob(); // Converte a resposta em um Blob
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob); // Cria um URL para o Blob
+            link.download = selectedPhoto.split('/').pop(); // Nome do arquivo
+            document.body.appendChild(link);
+            link.click(); // Simula o clique para iniciar o download
+            document.body.removeChild(link); // Remove o link do DOM após o download
+            URL.revokeObjectURL(link.href); // Libera a memória do Blob
+            onClose(); // Fecha o modal após o download
+        } catch (error) {
+            console.error('Erro ao baixar a foto:', error);
+        }
     };
 
-    const vazio = photoImports.length <= 0 ? "repeat(auto-fit, minmax(150px, 500px));" : "repeat(auto-fit, minmax(150px, 180px));";
-    const margin = photoImports.length <= 0 ? "0px" : "10%";
+    const vazio = imageLinks.length <= 0 ? "repeat(auto-fit, minmax(150px, 500px));" : "repeat(auto-fit, minmax(150px, 180px));";
+    const margin = imageLinks.length <= 0 ? "0px" : "10%";
+    const display = imageLinks.length <= 0 ? 'none' : 'block'
 
     return (
         <>
@@ -95,7 +100,7 @@ export const ViewPhotos2 = () => {
                         Baixe suas fotos favoritas!
                     </Text>
                     <Grid templateColumns={vazio} gap={3} mb='10%'>
-                        {photoImports.length <= 0 ? (
+                        {imageLinks.length <= 0 ? (
                             <GridItem
                                 key="ghost"
                                 borderRadius="10px"
@@ -109,10 +114,10 @@ export const ViewPhotos2 = () => {
                                 <Text textAlign='center' color='white'><NavLink to='/'>Inicio</NavLink></Text>
                             </GridItem>
                         ) : (
-                            photoImports.map((foto) => (
+                            imageLinks.map((foto) => (
                                 <GridItem
                                     onClick={() => handleOpenModal(foto)}
-                                    key={foto} // Use o nome da foto como key
+                                    key={foto} // Use o link da foto como key
                                     borderRadius="10px"
                                     w="100%"
                                     h="200"
@@ -123,7 +128,7 @@ export const ViewPhotos2 = () => {
                             ))
                         )}
                     </Grid>
-                    <Link href="#topo" textAlign='center' fontSize='1.3rem' color='orange'>Voltar ao topo</Link>
+                    <Link display={display} href="#topo" textAlign='center' fontSize='1.3rem' color='orange'>Voltar ao topo</Link>
                 </Box>
             </BoxSection>
             <Modal isOpen={isOpen} onClose={onClose} size='xl'>
