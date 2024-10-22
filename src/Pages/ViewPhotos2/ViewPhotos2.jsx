@@ -27,11 +27,13 @@ export const ViewPhotos2 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const [imageLinks, setImageLinks] = useState([]); // Array para armazenar os links de imagens
+    const [text, setText] = useState(false)
 
     // Função para gerar os links de imagens
     const generateImageLinks = (photoNames) => {
         const baseUrl = "https://raw.githubusercontent.com/Samael7735/fotos-evento-geny/main/src/assets/Fotos"; // URL base para as imagens
         const links = photoNames.map(name => `${baseUrl}/${name}`); // Cria links completos
+        setText(true)//atualiza o estado para mudar o text
         return links;
     };
 
@@ -51,6 +53,7 @@ export const ViewPhotos2 = () => {
                 localStorage.setItem('imageLinks', JSON.stringify(newLinks)); // Armazena os links no local storage
             } else {
                 console.log("Nenhum link foi gerado.");
+                setText(false)
             }
         } else {
             console.log("Links encontrados no localStorage. Nenhuma requisição necessária.");
@@ -58,12 +61,13 @@ export const ViewPhotos2 = () => {
         }
     }, []); // O efeito roda apenas uma vez na montagem
     
-    
-
     const handleOpenModal = (foto) => {
         setSelectedPhoto(foto);
         onOpen();
     }
+
+    const Texto = text ? 'Melhores momentos 🍻' : 'Indisponível no momento'
+    const Texto2 = text ? 'Baixe suas fotos favoritas!' : 'Você pode baixar pelo google drive caso não seja possível visualizar aqui T-T.'
     
     return (
         <>
@@ -77,7 +81,7 @@ export const ViewPhotos2 = () => {
                         fontSize="clamp(1.8rem, 1vw, 2vw)"
                         fontWeight="300"
                     >
-                        Melhores momentos 🍻
+                        {Texto}
                     </Text>
                     <Text
                         mb='10%'
@@ -86,7 +90,7 @@ export const ViewPhotos2 = () => {
                         fontSize="clamp(1.2rem, 1vw, 2vw)"
                         fontWeight="300"
                     >
-                        Baixe suas fotos favoritas!
+                        {Texto2}
                     </Text>
                     <Grid 
                         w='100%' 
@@ -106,9 +110,7 @@ export const ViewPhotos2 = () => {
                             flexDir='column'
                         >
                             <Image src={Ghost} alt='fantasminha' />
-                            <Text mb='5%' textAlign='center' color='orange'>
-                                Ainda não há fotos, volte mais tarde e atualize a página
-                            </Text>
+                            
                             <Text textAlign='center' color='white'>
                                 <NavLink to='/'>Inicio</NavLink>
                             </Text>
