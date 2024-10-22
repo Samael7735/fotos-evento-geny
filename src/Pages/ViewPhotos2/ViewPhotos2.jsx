@@ -28,22 +28,44 @@ export const ViewPhotos2 = () => {
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const [imageLinks, setImageLinks] = useState([]); // Array para armazenar os links de imagens
 
-    useEffect(() => {
+    // Função para gerar os links de imagens
+    const generateImageLinks = (photoNames) => {
         const baseUrl = "https://raw.githubusercontent.com/Samael7735/fotos-evento-geny/main/src/assets/Fotos"; // URL base para as imagens
+        const links = photoNames.map(name => `${baseUrl}/${name}`); // Cria links completos
+        console.log('Generated image links:', links); // Debug: mostra os links gerados
+        return links;
+    };
+
+    useEffect(() => {
         const storedLinks = localStorage.getItem('imageLinks');
+        console.log('Stored links from localStorage:', storedLinks); // Debug: mostra os links armazenados
 
         if (storedLinks) {
             // Se os links estão armazenados, parseia e atualiza o estado
             setImageLinks(JSON.parse(storedLinks));
+            console.log('Loaded links from localStorage:', JSON.parse(storedLinks)); // Debug: mostra os links carregados
         } else {
             // Se não há links armazenados, gera novos links
             const photoNames = photoImports.map(photo => photo.replace(/"/g, '')); // Limpa aspas do array importado
-            const newLinks = photoNames.map(name => `${baseUrl}/${name}`); // Cria links completos
+            const newLinks = generateImageLinks(photoNames); // Cria novos links
 
             setImageLinks(newLinks); // Atualiza o estado com os novos links
             localStorage.setItem('imageLinks', JSON.stringify(newLinks)); // Armazena os links no local storage
         }
-    }, []);
+    }, []); // Este efeito roda apenas uma vez na montagem
+
+    // Este useEffect monitora mudanças em photoImports
+    useEffect(() => {
+        if (photoImports.length > 0) {
+            console.log('photoImports has changed:', photoImports); // Debug: mostra as mudanças em photoImports
+            const photoNames = photoImports.map(photo => photo.replace(/"/g, '')); // Limpa aspas do array importado
+            const newLinks = generateImageLinks(photoNames); // Cria novos links
+
+            setImageLinks(newLinks); // Atualiza o estado com os novos links
+            localStorage.setItem('imageLinks', JSON.stringify(newLinks)); // Armazena os links no local storage
+            console.log('Updated image links:', newLinks); // Debug: mostra os novos links gerados
+        }
+    }, [photoImports]); // Executa sempre que photoImports muda
 
     const handleOpenModal = (foto) => {
         setSelectedPhoto(foto);
@@ -55,7 +77,7 @@ export const ViewPhotos2 = () => {
             console.error('Nenhuma foto selecionada para download');
             return;
         }
-    
+
         try {
             const response = await fetch(selectedPhoto); // Faz uma requisição para obter a imagem
             const blob = await response.blob(); // Converte a resposta em um Blob
@@ -74,7 +96,7 @@ export const ViewPhotos2 = () => {
 
     const vazio = imageLinks.length <= 0 ? "repeat(auto-fit, minmax(150px, 500px));" : "repeat(auto-fit, minmax(150px, 180px));";
     const margin = imageLinks.length <= 0 ? "0px" : "10%";
-    const display = imageLinks.length <= 0 ? 'none' : 'block'
+    const display = imageLinks.length <= 0 ? 'none' : 'block';
 
     return (
         <>
