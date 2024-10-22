@@ -27,13 +27,11 @@ export const ViewPhotos2 = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const [imageLinks, setImageLinks] = useState([]); // Array para armazenar os links de imagens
-    const [text, setText] = useState(false)
 
     // Função para gerar os links de imagens
     const generateImageLinks = (photoNames) => {
         const baseUrl = "https://raw.githubusercontent.com/Samael7735/fotos-evento-geny/main/src/assets/Fotos"; // URL base para as imagens
         const links = photoNames.map(name => `${baseUrl}/${name}`); // Cria links completos
-        setText(true)//atualiza o estado para mudar o text
         return links;
     };
 
@@ -53,7 +51,6 @@ export const ViewPhotos2 = () => {
                 localStorage.setItem('imageLinks', JSON.stringify(newLinks)); // Armazena os links no local storage
             } else {
                 console.log("Nenhum link foi gerado.");
-                setText(false)
             }
         } else {
             console.log("Links encontrados no localStorage. Nenhuma requisição necessária.");
@@ -66,8 +63,9 @@ export const ViewPhotos2 = () => {
         onOpen();
     }
 
-    const Texto = text ? 'Melhores momentos 🍻' : 'Indisponível no momento'
-    const Texto2 = text ? 'Baixe suas fotos favoritas!' : 'Você pode baixar pelo google drive caso não seja possível visualizar aqui T-T.'
+    const Texto = imageLinks.length > 0 ? 'Melhores momentos 🍻' : 'Indisponível no momento';
+    const Texto2 = imageLinks.length > 0 ? 'Baixe suas fotos favoritas!' : 'Tente novamente mais tarde ou baixe pelo google drive ;)';
+    
     
     return (
         <>
