@@ -2,7 +2,7 @@ import {Box, Heading, Text, Image} from '@chakra-ui/react'
 import Header from '../../Components/Header/Header'
 import {BoxSection} from '../../Components/BoxSections/BoxSection'
 import BlueCircle from '../../Components/BlueCircle/BlueCircle'
-import Person from '../../assets/Images/LogoMarca.jpg'
+import Person from '../../assets/Images/logoSme.jpg'
 import { PrimaryButton, SecondaryButton } from '../../Components/Buttons/Buttons'
 import { NavLink } from 'react-router-dom'
 
@@ -25,7 +25,7 @@ export const Home = ()=>{
                     <NavLink to='/Fotos'>Ver fotos do evento</NavLink>
                     </PrimaryButton>
                     <SecondaryButton scheme='transparent' fontSize='1rem'>
-                        <NavLink to='/Contato'>Produtora do evento</NavLink>
+                        <NavLink to='/Contato'>Desenvolvedor</NavLink>
                     </SecondaryButton>
                 </Box>
             </Box>
