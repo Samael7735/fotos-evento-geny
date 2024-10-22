@@ -11,8 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
-/src/assets/Fotos/
-
+# Ignorar imagens
+*.jpeg
+*.png
+/src/assets/Fotos/*
 
 # Editor directories and files
 .vscode/*
