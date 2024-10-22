@@ -37,16 +37,28 @@ export const ViewPhotos2 = () => {
 
     useEffect(() => {
         const storedLinks = localStorage.getItem('imageLinks');
-
-        if (storedLinks) {
-            setImageLinks(JSON.parse(storedLinks));
-        } else {
+    
+        // Verifica se o localStorage já contém links ou se o array está vazio
+        if (!storedLinks || JSON.parse(storedLinks).length === 0) {
+            console.log("Tentando fazer a requisição para gerar os links de imagens...");
+    
             const photoNames = photoImports.map(photo => photo.replace(/"/g, '')); // Limpa aspas do array importado
-            const newLinks = generateImageLinks(photoNames); // Cria novos links
-            setImageLinks(newLinks); // Atualiza o estado com os novos links
-            localStorage.setItem('imageLinks', JSON.stringify(newLinks)); // Armazena os links no local storage
+            const newLinks = generateImageLinks(photoNames); // Gera novos links
+            
+            if (newLinks.length > 0) {
+                console.log("Links gerados com sucesso:", newLinks);
+                setImageLinks(newLinks); // Atualiza o estado com os novos links
+                localStorage.setItem('imageLinks', JSON.stringify(newLinks)); // Armazena os links no local storage
+            } else {
+                console.log("Nenhum link foi gerado.");
+            }
+        } else {
+            console.log("Links encontrados no localStorage. Nenhuma requisição necessária.");
+            setImageLinks(JSON.parse(storedLinks)); // Carrega os links armazenados se já existirem
         }
-    }, []); // Este efeito roda apenas uma vez na montagem
+    }, []); // O efeito roda apenas uma vez na montagem
+    
+    
 
     const handleOpenModal = (foto) => {
         setSelectedPhoto(foto);
